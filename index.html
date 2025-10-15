@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Meine persönliche Startseite</title>
+  <style>
+    :root {
+      --bg: #f9fafb;
+      --fg: #1a1a1a;
+      --accent: #20b581ff;
+      --card-bg: #fff;
+      --border: #e5e7eb;
+    }
+    html {
+      box-sizing: border-box;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.8;
+      min-height: 100vh;
+      letter-spacing: 0.01em;
+    }
+    header {
+      padding: 2.5rem 1rem 1.5rem 1rem;
+      text-align: center;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      margin: 0 0 0.7rem 0;
+      font-size: 2.3rem;
+      color: var(--accent);
+      letter-spacing: -1px;
+    }
+    header p {
+      margin: 0.7em 0;
+    }
+    main {
+      max-width: 800px;
+      margin: 2.5rem auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+    section {
+      background: var(--card-bg);
+      border-radius: 1rem;
+      box-shadow: 0 2px 16px rgba(32,181,129,0.10);
+      padding: 2rem 1.2rem;
+      border: 1px solid var(--border);
+      margin-bottom: 0.5rem;
+    }
+    /* Bild */
+    .profilbild {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .profilbild img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(32,181,129,0.13);
+    }
+    /* Tabelle */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.2rem;
+      font-size: 1rem;
+    }
+    th, td {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    th {
+      background: var(--bg);
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    tbody tr:hover {
+      background: #e6faf4;
+    }
+    /* Galerie */
+    .galerie {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.2rem;
+    }
+    .karte {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      box-shadow: 0 2px 16px rgba(32,181,129,0.13);
+      min-height: 100%;
+    }
+    .karte:hover {
+      box-shadow: 0 8px 32px rgba(32,181,129,0.18);
+      border-color: var(--accent);
+    }
+    .karte img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      background: #eee;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+    }
+    .karte-content {
+      padding: 1.2rem 1rem 1rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .karte-title {
+      font-size: 1.13rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+    .karte-text {
+      font-size: 1rem;
+      color: var(--fg);
+      margin: 0;
+      flex: 1;
+    }
+    .karte-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+    @media (max-width: 720px) {
+      .galerie {
+        grid-template-columns: 1fr;
+      }
+      main {
+        margin: 1.2rem 0;
+        gap: 1.5rem;
+      }
+      section {
+        padding: 1.2rem 0.7rem;
+      }
+      .profilbild img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+    @media (max-width: 600px) {
+      main {
+        margin: 0.7rem 0;
+        gap: 1.1rem;
+      }
+      section {
+        padding: 1rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Leon Mustermann</h1>
+    <p>Willkommen auf meiner persönlichen Startseite. Hier findest du einen kurzen Überblick über meinen Werdegang und einige Projekte, die mir am Herzen liegen.</p>
+    <p>Ich interessiere mich für Geoinformatik, Webentwicklung und innovative Technologien, die unsere Welt vernetzen.</p>
+  </header>
+  <main>
+    <section class="profilbild">
+      <figure>
+        <img src="assets/me.jpg" alt="Porträt von Leon Mustermann">
+        <figcaption style="text-align:center; margin-top:0.5rem; color:#666; font-size:0.95rem;">Das bin ich</figcaption>
+      </figure>
+    </section>
+    <section>
+      <h2>Stationen</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Jahr</th>
+            <th>Station</th>
+            <th>Ort</th>
+            <th>Stichwort</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2018</td>
+            <td>Abitur</td>
+            <td>Berlin</td>
+            <td>Schulabschluss</td>
+          </tr>
+          <tr>
+            <td>2019</td>
+            <td>Freiwilligendienst</td>
+            <td>Leipzig</td>
+            <td>Soziales Jahr</td>
+          </tr>
+          <tr>
+            <td>2020</td>
+            <td>Studienbeginn</td>
+            <td>Dresden</td>
+            <td>Geoinformatik</td>
+          </tr>
+          <tr>
+            <td>2022</td>
+            <td>Praktikum</td>
+            <td>Hamburg</td>
+            <td>Web-GIS</td>
+          </tr>
+          <tr>
+            <td>2023</td>
+            <td>Werkstudent</td>
+            <td>Berlin</td>
+            <td>Datenanalyse</td>
+          </tr>
+          <tr>
+            <td>2025</td>
+            <td>Bachelorarbeit</td>
+            <td>Dresden</td>
+            <td>Open Data</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+  <h2>Galerie</h2>
+  <div class="galerie">
+    <a class="karte-link" href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub Profil öffnen">
+      <div class="karte">
+        <img src="https://picsum.photos/600/400?random=1" alt="GitHub Platzhalterbild">
+        <div class="karte-content">
+          <div class="karte-title">GitHub</div>
+          <div class="karte-text">Mein Code, Projekte und Beiträge auf GitHub.</div>
+        </div>
+      </div>
+    </a>
+    <a class="karte-link" href="https://portfolio.example.com/" target="_blank" rel="noopener" aria-label="Portfolio öffnen">
+      <div class="karte">
+        <img src="https://picsum.photos/600/400?random=2" alt="Portfolio Platzhalterbild">
+        <div class="karte-content">
+          <div class="karte-title">Portfolio</div>
+          <div class="karte-text">Ausgewählte Arbeiten und Projekte im Überblick.</div>
+        </div>
+      </div>
+    </a>
+    <a class="karte-link" href="https://fotoblog.example.com/" target="_blank" rel="noopener" aria-label="Fotoblog öffnen">
+      <div class="karte">
+        <img src="https://picsum.photos/600/400?random=3" alt="Fotoblog Platzhalterbild">
+        <div class="karte-content">
+          <div class="karte-title">Fotoblog</div>
+          <div class="karte-text">Meine fotografischen Eindrücke und Reisen.</div>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+  </main>
+</body>
