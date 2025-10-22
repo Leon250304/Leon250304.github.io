@@ -297,6 +297,51 @@
     .news-item .excerpt {
       color: var(--muted);
     }
+
+    /* Floating contact area */
+    .contact-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1200;
+      align-items: center;
+      pointer-events: none; /* allow only links to be interactive */
+    }
+    .contact-float .contact-btn {
+      pointer-events: auto;
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    }
+    .contact-float .contact-btn:hover, .contact-float .contact-btn:focus {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 34px rgba(2,6,23,0.12);
+      background: linear-gradient(180deg, rgba(32,181,129,0.06), transparent);
+      outline: none;
+    }
+    .contact-icon {
+      width: 20px;
+      height: 20px;
+      display: block;
+      color: var(--accent);
+    }
+    @media (max-width:480px){
+      .contact-float { right: 12px; bottom: 12px; }
+      .contact-float .contact-btn { width:40px;height:40px; }
+      .contact-icon { width:18px;height:18px; }
+    }
   </style>
 </head>
 <body>
@@ -380,6 +425,30 @@
           </div>
         </section>
       </section>
+    </div>
+
+    <!-- Floating contact buttons (bottom-right) -->
+    <div class="contact-float" aria-label="Kontakt und Profile">
+      <a href="mailto:leon@example.com" class="contact-btn" title="E-Mail" aria-label="E-Mail senden">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 6.5A2.5 2.5 0 015.5 4h13A2.5 2.5 0 0121 6.5v11A2.5 2.5 0 0118.5 20h-13A2.5 2.5 0 013 17.5v-11z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4.75 6.75l7.25 5.25 7.25-5.25" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="https://www.linkedin.com/in/leon-profile" class="contact-btn" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn Profil öffnen">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2" y="3" width="20" height="18" rx="2" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M7.5 10.5v6M7.5 8.5v.01M12 16.5v-4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16.5 16.5v-3c0-1.2-.9-1.5-1.5-1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <a href="https://github.com/Leon250304" class="contact-btn" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub Profil öffnen">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2C7.58 2 4 5.58 4 10c0 3.54 2.29 6.53 5.47 7.58.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.86 2.33.66.07-.52.28-.86.51-1.06-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.5 7.5 0 012 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38C17.71 16.53 20 13.54 20 10c0-4.42-3.58-8-8-8z" fill="currentColor"/>
+        </svg>
+      </a>
     </div>
 
     <!-- ...existing code... -->
@@ -650,6 +719,51 @@
     }
     .news-item .excerpt {
       color: var(--muted);
+    }
+
+    /* Floating contact area */
+    .contact-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1200;
+      align-items: center;
+      pointer-events: none; /* allow only links to be interactive */
+    }
+    .contact-float .contact-btn {
+      pointer-events: auto;
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    }
+    .contact-float .contact-btn:hover, .contact-float .contact-btn:focus {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 34px rgba(2,6,23,0.12);
+      background: linear-gradient(180deg, rgba(32,181,129,0.06), transparent);
+      outline: none;
+    }
+    .contact-icon {
+      width: 20px;
+      height: 20px;
+      display: block;
+      color: var(--accent);
+    }
+    @media (max-width:480px){
+      .contact-float { right: 12px; bottom: 12px; }
+      .contact-float .contact-btn { width:40px;height:40px; }
+      .contact-icon { width:18px;height:18px; }
     }
   </style>
 
