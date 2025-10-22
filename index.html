@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Meine persönliche Startseite</title>
   <style>
+    /* Theme variables and modernized styling */
+    :root {
+      --bg: #f9fafb;
+      --fg: #0f1720;
+      --accent: #20b581ff;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.6);
+    }
+    :root[data-theme='dark'], [data-theme='dark'] {
+      --bg: #0b1020;
+      --fg: #e6eef2;
+      --accent: #2bd6a1;
+      --card-bg: #071122;
+      --border: rgba(255,255,255,0.06);
+      --muted: #94a3b8;
+      --glass: rgba(255,255,255,0.03);
+    }
+    html { transition: background 220ms ease, color 220ms ease; }
+    body { background: linear-gradient(180deg,var(--bg), rgba(0,0,0,0.02)); transition: background 220ms ease, color 220ms ease; }
+
     :root {
       --bg: #f9fafb;
       --fg: #1a1a1a;
@@ -177,6 +199,60 @@
         padding: 1rem 0.5rem;
       }
     }
+
+    /* Tabs */
+    .tabs-bar { display:flex; align-items:center; gap:0.5rem; }
+    .tab {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight:600;
+      color:var(--muted);
+      transition: all 180ms ease;
+      outline: none;
+      box-shadow: none;
+    }
+    .tab:hover { transform: translateY(-2px); color:var(--fg); }
+    .tab[aria-selected='true']{
+      background: linear-gradient(90deg, rgba(32,181,129,0.12), rgba(32,181,129,0.06));
+      color: var(--accent);
+      border-color: rgba(32,181,129,0.18);
+      box-shadow: 0 6px 18px rgba(32,181,129,0.08);
+    }
+    .tab:focus{ box-shadow: 0 0 0 4px rgba(32,181,129,0.08); }
+
+    .theme-toggle{
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.55rem;
+      cursor:pointer;
+      font-size:1rem;
+      transition:transform 150ms ease, background 150ms ease;
+    }
+    .theme-toggle:hover{ transform: translateY(-2px); }
+
+    /* Panels */
+    .panels .tabpanel{ display:block; background:var(--card-bg); border-radius:1rem; padding:1.4rem; border:1px solid var(--border); box-shadow:0 8px 30px rgba(2,6,23,0.04); margin-bottom:1rem; }
+    .panels .tabpanel[aria-hidden='true']{ display:none; }
+
+    /* Cards */
+    .karte{ border-radius:0.9rem; overflow:hidden; border:1px solid var(--border); background:var(--card-bg); transition:transform 220ms ease, box-shadow 220ms ease; }
+    .karte img{ height:140px; object-fit:cover; }
+    .karte:hover{ transform: translateY(-6px); box-shadow:0 20px 40px rgba(2,6,23,0.12); }
+
+    /* Table improvements */
+    table tbody tr{ transition:background 180ms ease, transform 180ms ease; }
+    table tbody tr:hover{ transform: translateX(6px); }
+
+    /* Responsive tweaks */
+    @media (max-width:720px){
+      .tabs-bar{ padding:0 0.6rem; }
+      .tab{ padding:0.4rem 0.7rem; font-size:0.95rem; }
+      .karte img{ height:120px; }
+    }
   </style>
 </head>
 <body>
@@ -189,95 +265,267 @@
     <p>Ich interessiere mich für Geoinformatik, Webentwicklung und innovative Technologien, die unsere Welt vernetzen.</p>
   </header>
   <main>
-    <section class="profilbild">
-      <figure>
-        <img src="assets/me.jpg" alt="Porträt von Leon Mustermann">
-        <figcaption style="text-align:center; margin-top:0.5rem; color:#666; font-size:0.95rem;">Das bin ich</figcaption>
-      </figure>
-    </section>
-    <section>
-      <h2>Stationen</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Jahr</th>
-            <th>Station</th>
-            <th>Ort</th>
-            <th>Stichwort</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2018</td>
-            <td>Abitur</td>
-            <td>Berlin</td>
-            <td>Schulabschluss</td>
-          </tr>
-          <tr>
-            <td>2019</td>
-            <td>Freiwilligendienst</td>
-            <td>Leipzig</td>
-            <td>Soziales Jahr</td>
-          </tr>
-          <tr>
-            <td>2020</td>
-            <td>Studienbeginn</td>
-            <td>Dresden</td>
-            <td>Geoinformatik</td>
-          </tr>
-          <tr>
-            <td>2021</td>
-            <td>Praktikum</td>
-            <td>Hamburg</td>
-            <td>Web-GIS</td>
-          </tr>
-          <tr>
-            <td>2023</td>
-            <td>Werkstudent</td>
-            <td>Berlin</td>
-            <td>Datenanalyse</td>
-          </tr>
-          <tr>
-            <td>2025</td>
-            <td>Bachelorarbeit</td>
-            <td>Dresden</td>
-            <td>Open Data</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-    <section>
-  <h2>Galerie</h2>
-  <div class="galerie">
-    <a class="karte-link" href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub Profil öffnen">
-      <div class="karte">
-        <img src="https://picsum.photos/600/400?random=1" alt="GitHub Platzhalterbild">
-        <div class="karte-content">
-          <div class="karte-title">GitHub</div>
-          <div class="karte-text">Mein Code, Projekte und Beiträge auf GitHub.</div>
-        </div>
+    <!-- Tabs + Theme Toggle -->
+    <div class="tabs-bar" role="tablist" aria-label="Hauptnavigation" style="max-width:800px;margin:1.2rem auto 0;display:flex;align-items:center;gap:0.6rem;padding:0 1rem;">
+      <div class="tabs" style="display:flex;gap:0.5rem;flex:1;">
+        <button class="tab" role="tab" aria-selected="true" data-target="tab-about">Über mich</button>
+        <button class="tab" role="tab" aria-selected="false" data-target="tab-stations">Stationen</button>
+        <button class="tab" role="tab" aria-selected="false" data-target="tab-gallery">Galerie</button>
       </div>
-    </a>
-    <a class="karte-link" href="https://portfolio.example.com/" target="_blank" rel="noopener" aria-label="Portfolio öffnen">
-      <div class="karte">
-        <img src="https://picsum.photos/600/400?random=2" alt="Portfolio Platzhalterbild">
-        <div class="karte-content">
-          <div class="karte-title">Portfolio</div>
-          <div class="karte-text">Ausgewählte Arbeiten und Projekte im Überblick.</div>
-        </div>
-      </div>
-    </a>
-    <a class="karte-link" href="https://fotoblog.example.com/" target="_blank" rel="noopener" aria-label="Fotoblog öffnen">
-      <div class="karte">
-        <img src="https://picsum.photos/600/400?random=3" alt="Fotoblog Platzhalterbild">
-        <div class="karte-content">
-          <div class="karte-title">Fotoblog</div>
-          <div class="karte-text">Meine fotografischen Eindrücke und Reisen.</div>
-        </div>
-      </div>
-    </a>
-  </div>
-</section>
+      <button id="themeToggle" class="theme-toggle" aria-pressed="false" title="Light/Night Mode" aria-label="Thema wechseln">🌙</button>
+    </div>
+
+    <!-- Panels -->
+    <div class="panels" style="max-width:800px;margin:0.6rem auto;padding:0 1rem;">
+      <section id="tab-about" class="tabpanel" role="tabpanel" aria-hidden="false">
+        <!-- ...existing profilbild section... -->
+        <section class="profilbild">
+          <figure>
+            <img src="assets/me.jpg" alt="Porträt von Leon Mustermann">
+            <figcaption style="text-align:center; margin-top:0.5rem; color:#666; font-size:0.95rem;">Das bin ich</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <section id="tab-stations" class="tabpanel" role="tabpanel" aria-hidden="true">
+        <!-- ...existing Stationen section... -->
+        <section>
+          <h2>Stationen</h2>
+          <div class="table-wrap" style="overflow:auto;border-radius:0.75rem;border:1px solid var(--border);">
+            <table>
+              <thead>
+                <tr>
+                  <th>Jahr</th>
+                  <th>Station</th>
+                  <th>Ort</th>
+                  <th>Stichwort</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2018</td>
+                  <td>Abitur</td>
+                  <td>Berlin</td>
+                  <td>Schulabschluss</td>
+                </tr>
+                <tr>
+                  <td>2019</td>
+                  <td>Freiwilligendienst</td>
+                  <td>Leipzig</td>
+                  <td>Soziales Jahr</td>
+                </tr>
+                <tr>
+                  <td>2020</td>
+                  <td>Studienbeginn</td>
+                  <td>Dresden</td>
+                  <td>Geoinformatik</td>
+                </tr>
+                <tr>
+                  <td>2021</td>
+                  <td>Praktikum</td>
+                  <td>Hamburg</td>
+                  <td>Web-GIS</td>
+                </tr>
+                <tr>
+                  <td>2023</td>
+                  <td>Werkstudent</td>
+                  <td>Berlin</td>
+                  <td>Datenanalyse</td>
+                </tr>
+                <tr>
+                  <td>2025</td>
+                  <td>Bachelorarbeit</td>
+                  <td>Dresden</td>
+                  <td>Open Data</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="tab-gallery" class="tabpanel" role="tabpanel" aria-hidden="true">
+        <!-- ...existing Galerie section... -->
+        <section>
+          <h2>Galerie</h2>
+          <div class="galerie">
+            <a class="karte-link" href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub Profil öffnen">
+              <div class="karte">
+                <img src="https://picsum.photos/600/400?random=1" alt="GitHub Platzhalterbild">
+                <div class="karte-content">
+                  <div class="karte-title">GitHub</div>
+                  <div class="karte-text">Mein Code, Projekte und Beiträge auf GitHub.</div>
+                </div>
+              </div>
+            </a>
+            <a class="karte-link" href="https://portfolio.example.com/" target="_blank" rel="noopener" aria-label="Portfolio öffnen">
+              <div class="karte">
+                <img src="https://picsum.photos/600/400?random=2" alt="Portfolio Platzhalterbild">
+                <div class="karte-content">
+                  <div class="karte-title">Portfolio</div>
+                  <div class="karte-text">Ausgewählte Arbeiten und Projekte im Überblick.</div>
+                </div>
+              </div>
+            </a>
+            <a class="karte-link" href="https://fotoblog.example.com/" target="_blank" rel="noopener" aria-label="Fotoblog öffnen">
+              <div class="karte">
+                <img src="https://picsum.photos/600/400?random=3" alt="Fotoblog Platzhalterbild">
+                <div class="karte-content">
+                  <div class="karte-title">Fotoblog</div>
+                  <div class="karte-text">Meine fotografischen Eindrücke und Reisen.</div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <!-- ...existing code... -->
   </main>
+
+  <script>
+    (function(){
+      // Theme setup
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+      const storageKey = 'site-theme';
+      const applyTheme = (theme) => {
+        if(theme === 'dark'){
+          root.setAttribute('data-theme','dark');
+          toggle.textContent = '☀️';
+          toggle.setAttribute('aria-pressed','true');
+        } else {
+          root.removeAttribute('data-theme');
+          toggle.textContent = '🌙';
+          toggle.setAttribute('aria-pressed','false');
+        }
+      };
+      // initialize
+      const saved = localStorage.getItem(storageKey);
+      if(saved) applyTheme(saved);
+      else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+      // toggle on click
+      toggle.addEventListener('click', () => {
+        const isDark = root.getAttribute('data-theme') === 'dark';
+        const next = isDark ? 'light' : 'dark';
+        applyTheme(next === 'dark' ? 'dark' : 'light');
+        localStorage.setItem(storageKey, next === 'dark' ? 'dark' : 'light');
+      });
+
+      // Tabs
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+      const panels = Array.from(document.querySelectorAll('.tabpanel'));
+      function activateTab(targetId){
+        tabs.forEach(t => {
+          const sel = t.dataset.target === targetId;
+          t.setAttribute('aria-selected', sel ? 'true' : 'false');
+          if(sel) t.classList.add('active'); else t.classList.remove('active');
+        });
+        panels.forEach(p => {
+          const isTarget = p.id === targetId;
+          p.setAttribute('aria-hidden', isTarget ? 'false' : 'true');
+          if(isTarget){
+            p.style.display = '';
+            p.animate([{opacity:0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}],{duration:260,easing:'cubic-bezier(.2,.9,.2,1)'});
+          } else {
+            p.style.display = 'none';
+          }
+        });
+      }
+      // initial
+      activateTab('tab-about');
+      // listeners
+      tabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.target)));
+
+      // keyboard support
+      document.querySelector('.tabs').addEventListener('keydown', (e) => {
+        const idx = tabs.findIndex(t => t === document.activeElement);
+        if(e.key === 'ArrowRight') tabs[(idx+1)%tabs.length].focus();
+        if(e.key === 'ArrowLeft') tabs[(idx-1+tabs.length)%tabs.length].focus();
+        if(e.key === 'Home') tabs[0].focus();
+        if(e.key === 'End') tabs[tabs.length-1].focus();
+      });
+    })();
+  </script>
+
+  <style>
+    /* Theme variables and modernized styling */
+    :root {
+      --bg: #f9fafb;
+      --fg: #0f1720;
+      --accent: #20b581ff;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.6);
+    }
+    :root[data-theme='dark'], [data-theme='dark'] {
+      --bg: #0b1020;
+      --fg: #e6eef2;
+      --accent: #2bd6a1;
+      --card-bg: #071122;
+      --border: rgba(255,255,255,0.06);
+      --muted: #94a3b8;
+      --glass: rgba(255,255,255,0.03);
+    }
+    html { transition: background 220ms ease, color 220ms ease; }
+    body { background: linear-gradient(180deg,var(--bg), rgba(0,0,0,0.02)); transition: background 220ms ease, color 220ms ease; }
+
+    /* Tabs */
+    .tabs-bar { display:flex; align-items:center; gap:0.5rem; }
+    .tab {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight:600;
+      color:var(--muted);
+      transition: all 180ms ease;
+      outline: none;
+      box-shadow: none;
+    }
+    .tab:hover { transform: translateY(-2px); color:var(--fg); }
+    .tab[aria-selected='true']{
+      background: linear-gradient(90deg, rgba(32,181,129,0.12), rgba(32,181,129,0.06));
+      color: var(--accent);
+      border-color: rgba(32,181,129,0.18);
+      box-shadow: 0 6px 18px rgba(32,181,129,0.08);
+    }
+    .tab:focus{ box-shadow: 0 0 0 4px rgba(32,181,129,0.08); }
+
+    .theme-toggle{
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.55rem;
+      cursor:pointer;
+      font-size:1rem;
+      transition:transform 150ms ease, background 150ms ease;
+    }
+    .theme-toggle:hover{ transform: translateY(-2px); }
+
+    /* Panels */
+    .panels .tabpanel{ display:block; background:var(--card-bg); border-radius:1rem; padding:1.4rem; border:1px solid var(--border); box-shadow:0 8px 30px rgba(2,6,23,0.04); margin-bottom:1rem; }
+    .panels .tabpanel[aria-hidden='true']{ display:none; }
+
+    /* Cards */
+    .karte{ border-radius:0.9rem; overflow:hidden; border:1px solid var(--border); background:var(--card-bg); transition:transform 220ms ease, box-shadow 220ms ease; }
+    .karte img{ height:140px; object-fit:cover; }
+    .karte:hover{ transform: translateY(-6px); box-shadow:0 20px 40px rgba(2,6,23,0.12); }
+
+    /* Table improvements */
+    table tbody tr{ transition:background 180ms ease, transform 180ms ease; }
+    table tbody tr:hover{ transform: translateX(6px); }
+
+    /* Responsive tweaks */
+    @media (max-width:720px){
+      .tabs-bar{ padding:0 0.6rem; }
+      .tab{ padding:0.4rem 0.7rem; font-size:0.95rem; }
+      .karte img{ height:120px; }
+    }
+  </style>
+
 </body>
 </html>
