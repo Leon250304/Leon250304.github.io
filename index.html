@@ -268,9 +268,9 @@
     <!-- Tabs + Theme Toggle -->
     <div class="tabs-bar" role="tablist" aria-label="Hauptnavigation" style="max-width:800px;margin:1.2rem auto 0;display:flex;align-items:center;gap:0.6rem;padding:0 1rem;">
       <div class="tabs" style="display:flex;gap:0.5rem;flex:1;">
-        <button class="tab" role="tab" aria-selected="true" data-target="tab-about">Über mich</button>
-        <button class="tab" role="tab" aria-selected="false" data-target="tab-stations">Stationen</button>
-        <button class="tab" role="tab" aria-selected="false" data-target="tab-gallery">Galerie</button>
+        <button class="tab" role="tab" aria-selected="true" data-target="tab-about">About</button>
+        <button class="tab" role="tab" aria-selected="false" data-target="tab-news">News</button>
+        <button class="tab" role="tab" aria-selected="false" data-target="tab-projects">Projects</button>
       </div>
       <button id="themeToggle" class="theme-toggle" aria-pressed="false" title="Light/Night Mode" aria-label="Thema wechseln">🌙</button>
     </div>
@@ -278,101 +278,78 @@
     <!-- Panels -->
     <div class="panels" style="max-width:800px;margin:0.6rem auto;padding:0 1rem;">
       <section id="tab-about" class="tabpanel" role="tabpanel" aria-hidden="false">
-        <!-- ...existing profilbild section... -->
+        <!-- About: personal intro + photo -->
         <section class="profilbild">
           <figure>
             <img src="assets/me.jpg" alt="Porträt von Leon Mustermann">
-            <figcaption style="text-align:center; margin-top:0.5rem; color:#666; font-size:0.95rem;">Das bin ich</figcaption>
+            <figcaption style="text-align:center; margin-top:0.5rem; color:var(--muted); font-size:0.95rem;">Das bin ich</figcaption>
           </figure>
+        </section>
+        <section style="margin-top:1rem;">
+          <h2>Über mich</h2>
+          <p>Hallo — ich bin Leon Mustermann, Student der Geoinformatik mit Interesse an Web-GIS, Datenanalyse und Open Data. Auf dieser Seite stelle ich mich, aktuelle Neuigkeiten und ausgewählte Projekte vor.</p>
         </section>
       </section>
 
-      <section id="tab-stations" class="tabpanel" role="tabpanel" aria-hidden="true">
-        <!-- ...existing Stationen section... -->
+      <section id="tab-news" class="tabpanel" role="tabpanel" aria-hidden="true">
+        <!-- News: current events and timeline -->
         <section>
-          <h2>Stationen</h2>
-          <div class="table-wrap" style="overflow:auto;border-radius:0.75rem;border:1px solid var(--border);">
-            <table>
-              <thead>
-                <tr>
-                  <th>Jahr</th>
-                  <th>Station</th>
-                  <th>Ort</th>
-                  <th>Stichwort</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>2018</td>
-                  <td>Abitur</td>
-                  <td>Berlin</td>
-                  <td>Schulabschluss</td>
-                </tr>
-                <tr>
-                  <td>2019</td>
-                  <td>Freiwilligendienst</td>
-                  <td>Leipzig</td>
-                  <td>Soziales Jahr</td>
-                </tr>
-                <tr>
-                  <td>2020</td>
-                  <td>Studienbeginn</td>
-                  <td>Dresden</td>
-                  <td>Geoinformatik</td>
-                </tr>
-                <tr>
-                  <td>2021</td>
-                  <td>Praktikum</td>
-                  <td>Hamburg</td>
-                  <td>Web-GIS</td>
-                </tr>
-                <tr>
-                  <td>2023</td>
-                  <td>Werkstudent</td>
-                  <td>Berlin</td>
-                  <td>Datenanalyse</td>
-                </tr>
-                <tr>
-                  <td>2025</td>
-                  <td>Bachelorarbeit</td>
-                  <td>Dresden</td>
-                  <td>Open Data</td>
-                </tr>
-              </tbody>
-            </table>
+          <h2>News</h2>
+          <div class="news-list" style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.8rem;">
+            <article class="karte" style="padding:1rem;display:flex;gap:0.8rem;align-items:flex-start;">
+              <div style="min-width:54px;font-weight:700;color:var(--accent);">2025</div>
+              <div>
+                <div style="font-weight:600;margin-bottom:0.25rem;">Bachelorarbeit gestartet</div>
+                <div style="color:var(--muted);">Forschungsthema: Open Data in städtischen Infrastrukturen. Durchführung in Kooperation mit der TU Dresden.</div>
+              </div>
+            </article>
+            <article class="karte" style="padding:1rem;display:flex;gap:0.8rem;align-items:flex-start;">
+              <div style="min-width:54px;font-weight:700;color:var(--accent);">2024</div>
+              <div>
+                <div style="font-weight:600;margin-bottom:0.25rem;">Neues Web-GIS veröffentlicht</div>
+                <div style="color:var(--muted);">Interaktive Visualisierung öffentlicher Daten als kleines Prototype-Projekt.</div>
+              </div>
+            </article>
+            <article class="karte" style="padding:1rem;display:flex;gap:0.8rem;align-items:flex-start;">
+              <div style="min-width:54px;font-weight:700;color:var(--accent);">2023</div>
+              <div>
+                <div style="font-weight:600;margin-bottom:0.25rem;">Werkstudent im Bereich Datenanalyse</div>
+                <div style="color:var(--muted);">Arbeit an Datentransformationen und Dashboards für städtische Projekte.</div>
+              </div>
+            </article>
           </div>
         </section>
       </section>
 
-      <section id="tab-gallery" class="tabpanel" role="tabpanel" aria-hidden="true">
-        <!-- ...existing Galerie section... -->
+      <section id="tab-projects" class="tabpanel" role="tabpanel" aria-hidden="true">
+        <!-- Projects: gallery of web-maps / sites -->
         <section>
-          <h2>Galerie</h2>
-          <div class="galerie">
-            <a class="karte-link" href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub Profil öffnen">
+          <h2>Projects</h2>
+          <div class="galerie" style="margin-top:0.8rem;">
+            <a class="karte-link" href="https://github.com/" target="_blank" rel="noopener" aria-label="Projekt: Interaktive Web-Map">
               <div class="karte">
-                <img src="https://picsum.photos/600/400?random=1" alt="GitHub Platzhalterbild">
+                <img src="https://picsum.photos/600/400?random=11" alt="Web-Map Beispiel">
                 <div class="karte-content">
-                  <div class="karte-title">GitHub</div>
-                  <div class="karte-text">Mein Code, Projekte und Beiträge auf GitHub.</div>
+                  <div class="karte-title">Interactive Web-Map</div>
+                  <div class="karte-text">Interaktive Karte mit thematischen Layern und Filtern (Web-GIS-Projekt).</div>
                 </div>
               </div>
             </a>
-            <a class="karte-link" href="https://portfolio.example.com/" target="_blank" rel="noopener" aria-label="Portfolio öffnen">
+            <a class="karte-link" href="https://portfolio.example.com/" target="_blank" rel="noopener" aria-label="Projekt: Persönliche Webseite">
               <div class="karte">
-                <img src="https://picsum.photos/600/400?random=2" alt="Portfolio Platzhalterbild">
+                <img src="https://picsum.photos/600/400?random=12" alt="Portfolio Beispiel">
                 <div class="karte-content">
-                  <div class="karte-title">Portfolio</div>
-                  <div class="karte-text">Ausgewählte Arbeiten und Projekte im Überblick.</div>
+                  <div class="karte-title">Personal Website</div>
+                  <div class="karte-text">Responsive Portfolio mit Projektbeschreibungen und Kontaktmöglichkeit.</div>
                 </div>
               </div>
             </a>
-            <a class="karte-link" href="https://fotoblog.example.com/" target="_blank" rel="noopener" aria-label="Fotoblog öffnen">
+            <a class="karte-link" href="https://fotoblog.example.com/" target="_blank" rel="noopener" aria-label="Projekt: Fotoprojekt">
               <div class="karte">
-                <img src="https://picsum.photos/600/400?random=3" alt="Fotoblog Platzhalterbild">
+                <img src="https://picsum.photos/600/400?random=13" alt="Fotoprojekt Beispiel">
                 <div class="karte-content">
-                  <div class="karte-title">Fotoblog</div>
-                  <div class="karte-text">Meine fotografischen Eindrücke und Reisen.</div>
+                  <div class="karte-title">Foto & Exploration</div>
+                  <div class="karte-text">Sammlung fotografischer Arbeiten und georeferenzierter Touren.</div>
                 </div>
               </div>
             </a>
