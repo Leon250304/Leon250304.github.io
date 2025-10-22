@@ -253,6 +253,50 @@
       .tab{ padding:0.4rem 0.7rem; font-size:0.95rem; }
       .karte img{ height:120px; }
     }
+
+    /* News specific styles */
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+    }
+    .news-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.9rem;
+      background: var(--card-bg);
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+    .news-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(32,181,129,0.18);
+    }
+    .news-item img {
+      width: 140px;
+      height: 100px;
+      object-fit: cover;
+      flex: 0 0 140px;
+      border-radius: 8px;
+    }
+    .news-item div {
+      flex: 1;
+    }
+    .news-item .meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .news-item .title {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .news-item .excerpt {
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -295,28 +339,8 @@
         <!-- News: current events and timeline -->
         <section>
           <h2>News</h2>
-          <div class="news-list" style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.8rem;">
-            <article class="karte" style="padding:1rem;display:flex;gap:0.8rem;align-items:flex-start;">
-              <div style="min-width:54px;font-weight:700;color:var(--accent);">2025</div>
-              <div>
-                <div style="font-weight:600;margin-bottom:0.25rem;">Bachelorarbeit gestartet</div>
-                <div style="color:var(--muted);">Forschungsthema: Open Data in städtischen Infrastrukturen. Durchführung in Kooperation mit der TU Dresden.</div>
-              </div>
-            </article>
-            <article class="karte" style="padding:1rem;display:flex;gap:0.8rem;align-items:flex-start;">
-              <div style="min-width:54px;font-weight:700;color:var(--accent);">2024</div>
-              <div>
-                <div style="font-weight:600;margin-bottom:0.25rem;">Neues Web-GIS veröffentlicht</div>
-                <div style="color:var(--muted);">Interaktive Visualisierung öffentlicher Daten als kleines Prototype-Projekt.</div>
-              </div>
-            </article>
-            <article class="karte" style="padding:1rem;display:flex;gap:0.8rem;align-items:flex-start;">
-              <div style="min-width:54px;font-weight:700;color:var(--accent);">2023</div>
-              <div>
-                <div style="font-weight:600;margin-bottom:0.25rem;">Werkstudent im Bereich Datenanalyse</div>
-                <div style="color:var(--muted);">Arbeit an Datentransformationen und Dashboards für städtische Projekte.</div>
-              </div>
-            </article>
+          <div id="newsContainer" class="news-list" style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.8rem;">
+            <!-- News items will be injected here by JavaScript -->
           </div>
         </section>
       </section>
@@ -423,6 +447,87 @@
         if(e.key === 'Home') tabs[0].focus();
         if(e.key === 'End') tabs[tabs.length-1].focus();
       });
+
+      // ---- New: load news from JSON ----
+      const newsContainer = document.getElementById('newsContainer');
+      async function loadNews(){
+        try{
+          const res = await fetch('assets/news.json', {cache: 'no-store'});
+          if(!res.ok) throw new Error('Fehler beim Laden der Nachrichten');
+          const data = await res.json();
+          renderNews(data);
+        }catch(err){
+          console.error(err);
+          newsContainer.innerHTML = '<p style="color:var(--muted);">Die News konnten nicht geladen werden.</p>';
+        }
+      }
+      function renderNews(items){
+        if(!items || !items.length){
+          newsContainer.innerHTML = '<p style="color:var(--muted);">Keine aktuellen Nachrichten vorhanden.</p>';
+          return;
+        }
+        newsContainer.innerHTML = '';
+        items.sort((a,b)=> new Date(b.date) - new Date(a.date));
+        items.forEach(item => {
+          const a = document.createElement('a');
+          a.className = 'news-item karte-link';
+          a.href = item.link || '#';
+          a.target = item.link ? '_blank' : '';
+          a.rel = item.link ? 'noopener' : '';
+
+          const card = document.createElement('article');
+          card.className = 'karte';
+          card.style.display = 'flex';
+          card.style.gap = '12px';
+          card.style.alignItems = 'flex-start';
+
+          if(item.image){
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = item.title || 'News Bild';
+            img.style.width = '140px';
+            img.style.height = '100px';
+            img.style.objectFit = 'cover';
+            img.style.flex = '0 0 140px';
+            img.style.borderRadius = '8px';
+            card.appendChild(img);
+          }
+
+          const content = document.createElement('div');
+          content.style.flex = '1';
+
+          const meta = document.createElement('div');
+          meta.style.fontSize = '0.9rem';
+          meta.style.color = 'var(--muted)';
+          meta.style.marginBottom = '0.25rem';
+          meta.textContent = new Date(item.date).toLocaleDateString('de-DE', {year:'numeric',month:'short',day:'numeric'});
+
+          const title = document.createElement('div');
+          title.style.fontWeight = '700';
+          title.style.marginBottom = '0.25rem';
+          title.textContent = item.title || '';
+
+          const excerpt = document.createElement('div');
+          excerpt.style.color = 'var(--muted)';
+          excerpt.textContent = item.excerpt || '';
+
+          content.appendChild(meta);
+          content.appendChild(title);
+          content.appendChild(excerpt);
+
+          card.appendChild(content);
+          a.appendChild(card);
+
+          newsContainer.appendChild(a);
+        });
+      }
+
+      // load immediately when script runs; also reload when News tab is activated to ensure freshness
+      loadNews();
+      document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', (e)=>{
+        if(e.currentTarget.dataset.target === 'tab-news') loadNews();
+      }));
+
     })();
   </script>
 
@@ -501,6 +606,50 @@
       .tabs-bar{ padding:0 0.6rem; }
       .tab{ padding:0.4rem 0.7rem; font-size:0.95rem; }
       .karte img{ height:120px; }
+    }
+
+    /* News specific styles */
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+    }
+    .news-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.9rem;
+      background: var(--card-bg);
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+    .news-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(32,181,129,0.18);
+    }
+    .news-item img {
+      width: 140px;
+      height: 100px;
+      object-fit: cover;
+      flex: 0 0 140px;
+      border-radius: 8px;
+    }
+    .news-item div {
+      flex: 1;
+    }
+    .news-item .meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .news-item .title {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .news-item .excerpt {
+      color: var(--muted);
     }
   </style>
 

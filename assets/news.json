@@ -1,0 +1,23 @@
+[
+  {
+    "date": "2025-09-15",
+    "title": "Bachelorarbeit gestartet",
+    "image": "https://picsum.photos/seed/bachelor/400/300",
+    "excerpt": "Forschung zu Open Data in städtischen Infrastrukturen in Kooperation mit der TU Dresden.",
+    "link": ""
+  },
+  {
+    "date": "2024-11-02",
+    "title": "Web-GIS Prototype veröffentlicht",
+    "image": "https://picsum.photos/seed/webgis/400/300",
+    "excerpt": "Interaktive Visualisierung öffentlicher Daten — Prototyp online gestellt.",
+    "link": "https://github.com/"
+  },
+  {
+    "date": "2023-06-20",
+    "title": "Werkstudententätigkeit abgeschlossen",
+    "image": "https://picsum.photos/seed/werkstudent/400/300",
+    "excerpt": "Arbeit an Datentransformationen und Dashboards für städtische Projekte.",
+    "link": ""
+  }
+]
