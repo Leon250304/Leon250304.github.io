@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_be2aec271cfadd5031203583d1a40ec3 {
+                #map_654b6f77290bee7832f49aa96d9da618 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -54,19 +54,19 @@
 <body>
     
     
-            <div class="folium-map" id="map_be2aec271cfadd5031203583d1a40ec3" ></div>
+            <div class="folium-map" id="map_654b6f77290bee7832f49aa96d9da618" ></div>
         
 </body>
 <script>
     
     
-            var map_be2aec271cfadd5031203583d1a40ec3 = L.map(
-                "map_be2aec271cfadd5031203583d1a40ec3",
+            var map_654b6f77290bee7832f49aa96d9da618 = L.map(
+                "map_654b6f77290bee7832f49aa96d9da618",
                 {
-                    center: [40.0, 45.0],
+                    center: [20.0, 0.0],
                     crs: L.CRS.EPSG3857,
                     ...{
-  "zoom": 3,
+  "zoom": 2,
   "zoomControl": true,
   "preferCanvas": false,
 }
@@ -78,7 +78,7 @@
 
         
     
-            var tile_layer_05111dcd1d4b2e651602751e34b195cf = L.tileLayer(
+            var tile_layer_5caef227c9895956196459bde91839aa = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -95,10 +95,10 @@
             );
         
     
-            tile_layer_05111dcd1d4b2e651602751e34b195cf.addTo(map_be2aec271cfadd5031203583d1a40ec3);
+            tile_layer_5caef227c9895956196459bde91839aa.addTo(map_654b6f77290bee7832f49aa96d9da618);
         
     
-            var tile_layer_5985275f55ff715ddd61fd73650f0f65 = L.tileLayer(
+            var tile_layer_a3827bc85e73832481ce2c15d6ad285b = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -115,64 +115,40 @@
             );
         
     
-            tile_layer_5985275f55ff715ddd61fd73650f0f65.addTo(map_be2aec271cfadd5031203583d1a40ec3);
+            tile_layer_a3827bc85e73832481ce2c15d6ad285b.addTo(map_654b6f77290bee7832f49aa96d9da618);
         
-    
-            var layer_control_a6cdc945c55c2f6f3ab80cf10b96ae28_layers = {
-                base_layers : {
-                    "openstreetmap" : tile_layer_05111dcd1d4b2e651602751e34b195cf,
-                    "Carto Light" : tile_layer_5985275f55ff715ddd61fd73650f0f65,
-                },
-                overlays :  {
-                },
-            };
-            let layer_control_a6cdc945c55c2f6f3ab80cf10b96ae28 = L.control.layers(
-                layer_control_a6cdc945c55c2f6f3ab80cf10b96ae28_layers.base_layers,
-                layer_control_a6cdc945c55c2f6f3ab80cf10b96ae28_layers.overlays,
-                {
-  "position": "topright",
-  "collapsed": false,
-  "autoZIndex": true,
-}
-            ).addTo(map_be2aec271cfadd5031203583d1a40ec3);
-
-        
-    
-            tile_layer_05111dcd1d4b2e651602751e34b195cf.addTo(map_be2aec271cfadd5031203583d1a40ec3);
-        
-    
-            tile_layer_5985275f55ff715ddd61fd73650f0f65.addTo(map_be2aec271cfadd5031203583d1a40ec3);
-        
-    
-            tile_layer_05111dcd1d4b2e651602751e34b195cf.addTo(map_be2aec271cfadd5031203583d1a40ec3);
-        
-    
-            tile_layer_5985275f55ff715ddd61fd73650f0f65.addTo(map_be2aec271cfadd5031203583d1a40ec3);
-        
-// add route + markers (Gau-Odernheim -> München -> Berlin -> Hamburg -> Gau-Odernheim)
+// highlight visited countries (England -> United Kingdom, Luxembourg, France, Spain, Italy, Austria, Croatia) and Mallorca marker
 (function(){
-  const map = map_be2aec271cfadd5031203583d1a40ec3;
-  const gau = [49.778723, 8.195101];
-  const muenchen = [48.1351, 11.5820];
-  const berlin = [52.52, 13.4050];
-  const hamburg = [53.5511, 9.9937];
+  const map = map_654b6f77290bee7832f49aa96d9da618;
+  const visited = new Set(['United Kingdom','Luxembourg','France','Spain','Italy','Austria','Croatia']);
+  const highlightStyle = { color:'#0b8f6a', weight:1, fillColor:'#20b581', fillOpacity:0.45 };
+  const baseStyle = { color:'#bfc9d6', weight:0.6, fillOpacity:0 };
 
-  const pts = [
-    {pos: gau, title: 'Wohnort: Gau‑Odernheim'},
-    {pos: muenchen, title: 'München'},
-    {pos: berlin, title: 'Berlin'},
-    {pos: hamburg, title: 'Hamburg'}
-  ];
+  // world geojson (small enough) from github raw
+  fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+    .then(r => r.json())
+    .then(geo => {
+      const layer = L.geoJSON(geo, {
+        style: function(feature){
+          const name = feature.properties && (feature.properties.name || feature.properties.ADMIN || feature.properties.NAME);
+          return visited.has(name) ? highlightStyle : baseStyle;
+        },
+        onEachFeature: function(feature, layer){
+          const name = feature.properties && (feature.properties.name || feature.properties.ADMIN || feature.properties.NAME);
+          if(visited.has(name)) layer.bindPopup('<strong>' + name + '</strong>');
+        }
+      }).addTo(map);
 
-  const fg = L.featureGroup();
-  pts.forEach(p => {
-    L.marker(p.pos).addTo(fg).bindPopup(`<strong>${p.title}</strong>`);
-  });
-  fg.addTo(map);
+      // Mallorca: add circle marker to mark the island specifically
+      const mallorca = L.circle([39.6953, 3.0176], { radius: 20000, color:'#0b8f6a', fillColor:'#20b581', fillOpacity:0.5 }).addTo(map).bindPopup('<strong>Mallorca (Balearen)</strong>');
 
-  const route = [gau, muenchen, berlin, hamburg, gau];
-  L.polyline(route, { color: '#1f9d6b', weight: 4, opacity: 0.9 }).addTo(map);
-  map.fitBounds(fg.getBounds(), { padding: [40,40] });
+      // fit to highlighted countries + mallorca
+      const group = L.featureGroup();
+      layer.eachLayer(l => { if(visited.has(l.feature && (l.feature.properties && (l.feature.properties.name || l.feature.properties.ADMIN || l.feature.properties.NAME)))) group.addLayer(l); });
+      group.addLayer(mallorca);
+      if(group.getLayers().length) map.fitBounds(group.getBounds(), { padding:[40,40] });
+    })
+    .catch(err => console.error('Fehler beim Laden der Länder-GeoJSON:', err));
 })();
 
 </script>
