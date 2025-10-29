@@ -148,19 +148,48 @@
 (function(){
   const map = map_be2aec271cfadd5031203583d1a40ec3;
   const points = [
-    { name: 'Hochschule Mainz (Studium)', lat: 49.9892, lng: 8.2383, popup: 'Hochschule Mainz — Studium' },
-    { name: 'Wohnort Gau‑Odernheim', lat: 49.778723, lng: 8.195101, popup: 'Wohnort: Gau‑Odernheim' },
-    { name: 'Vermessungs- und Katasteramt Rheinhessen (Alzey)', lat: 49.747508, lng: 8.118686, popup: 'Arbeitsort: Vermessungs- und Katasteramt Rheinhessen' }
+    { id: 'study', name: 'Hochschule Mainz (Studium)', lat: 49.9892, lng: 8.2383, popup: 'Hochschule Mainz — Studium' },
+    { id: 'home', name: 'Wohnort Gau‑Odernheim', lat: 49.778723, lng: 8.195101, popup: 'Wohnort: Gau‑Odernheim' },
+    { id: 'work', name: 'Vermessungs- und Katasteramt Rheinhessen (Alzey)', lat: 49.747508, lng: 8.118686, popup: 'Arbeitsort: Vermessungs- und Katasteramt Rheinhessen' }
   ];
+
+  // create awesome marker icons (requires Leaflet.awesome-markers + FontAwesome loaded)
+  const icons = {
+    study: L.AwesomeMarkers.icon({ icon: 'graduation-cap', prefix: 'fa', markerColor: 'blue', iconColor: 'white' }),
+    home:  L.AwesomeMarkers.icon({ icon: 'home', prefix: 'fa', markerColor: 'green', iconColor: 'white' }),
+    work:  L.AwesomeMarkers.icon({ icon: 'briefcase', prefix: 'fa', markerColor: 'orange', iconColor: 'white' })
+  };
 
   const group = L.featureGroup();
   points.forEach(p => {
-    const m = L.marker([p.lat, p.lng]);
-    m.bindPopup(`<strong>${p.name}</strong><div>${p.popup}</div>`);
+    const icon = icons[p.id] || icons.home;
+    const m = L.marker([p.lat, p.lng], { icon });
+    m.bindPopup(`<div style="min-width:160px"><strong style=\"color:#0b8f6a\">${p.name}</strong><div style=\"margin-top:6px;color:#333\">${p.popup}</div></div>`);
+    m.bindTooltip(p.name, { direction: 'top', offset: [0, -8], permanent: false, opacity: 0.9 });
     m.addTo(group);
   });
+
   group.addTo(map);
   if(points.length) map.fitBounds(group.getBounds(), { padding: [40,40] });
+
+  // legend control
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = function(){
+    const div = L.DomUtil.create('div', 'legend');
+    div.style.background = 'rgba(255,255,255,0.95)';
+    div.style.padding = '8px 10px';
+    div.style.borderRadius = '8px';
+    div.style.boxShadow = '0 2px 10px rgba(0,0,0,0.08)';
+    div.style.fontSize = '0.9rem';
+    div.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><span style="width:12px;height:12px;background:#1e73be;border-radius:3px;display:inline-block"></span><span>Studium</span></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><span style="width:12px;height:12px;background:#20b581;border-radius:3px;display:inline-block"></span><span>Wohnort</span></div>
+      <div style="display:flex;gap:8px;align-items:center"><span style="width:12px;height:12px;background:#f59e0b;border-radius:3px;display:inline-block"></span><span>Arbeit</span></div>
+    `;
+    return div;
+  };
+  legend.addTo(map);
+
 })();
 
 </script>
