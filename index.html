@@ -479,13 +479,17 @@
               </div>
             </a>
 
-            <!-- Neues: Cesium 3D-Viewer Vorschau -->
+            <!-- Neues: Cesium 3D-Viewer Vorschau (kein iframe: Bild + Link wegen WebGL-Restriktionen in iframes) -->
             <a class="karte-link" href="assets/map_5_3d.html" target="_blank" rel="noopener" aria-label="Karte: 3D LoD2 Gebäude in neuem Fenster öffnen">
               <div class="karte" role="article" aria-hidden="false">
-                <iframe src="assets/map_5_3d.html" loading="lazy" title="Vorschau: 3D LoD2 Gebäude" aria-label="Vorschau der 3D Karte" style="border:0;"></iframe>
+                <img src="https://picsum.photos/800/450?random=21" alt="Vorschau: 3D LoD2 Gebäude" style="width:100%;height:220px;object-fit:cover;background:#eef2f5;">
                 <div class="karte-content">
                   <div class="karte-title">3D LoD2 Gebäude (Cesium)</div>
-                  <div class="karte-text">Interaktive 3D-Ansicht mit Cesium: LoD2-Gebäude. Klicke, um die Karte in voller Größe zu öffnen.</div>
+                  <div class="karte-text">Interaktive 3D-Ansicht mit Cesium. WebGL kann in kleinen iframes Probleme machen — öffne die Vollansicht im neuen Tab.</div>
+                  <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+                    <button class="theme-toggle" style="font-size:0.95rem;cursor:pointer;" onclick="window.open('assets/map_5_3d.html','_blank')">Öffnen (neues Tab)</button>
+                    <a href="assets/map_5_3d.html" target="_blank" rel="noopener" style="color:var(--muted);font-size:0.95rem;">Oder Vollansicht öffnen</a>
+                  </div>
                 </div>
               </div>
             </a>
