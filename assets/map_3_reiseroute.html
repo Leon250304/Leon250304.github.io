@@ -44,6 +44,33 @@
                 }
             </style>
 
+            <style>
+/* numbered marker styling */
+.number-marker {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #1f9d6b; /* route color */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border: 2px solid #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+}
+.number-marker span { line-height: 1; }
+/* optional tooltip style when using permanent tooltip */
+.leaflet-tooltip.number-tooltip {
+  background: transparent;
+  border: 0;
+  color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+</style>
+
             <script>
                 L_NO_TOUCH = false;
                 L_DISABLE_3D = false;
@@ -165,8 +192,17 @@
   ];
 
   const fg = L.featureGroup();
-  pts.forEach(p => {
-    L.marker(p.pos).addTo(fg).bindPopup(`<strong>${p.title}</strong>`);
+  pts.forEach((p, idx) => {
+    const numberIcon = L.divIcon({
+      className: 'number-marker',
+      html: '<span>' + (idx+1) + '</span>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 34],
+      popupAnchor: [0, -36]
+    });
+    L.marker(p.pos, { icon: numberIcon })
+      .addTo(fg)
+      .bindPopup(`<strong>${idx+1}. ${p.title}</strong>`);
   });
   fg.addTo(map);
 
@@ -174,6 +210,7 @@
   L.polyline(route, { color: '#1f9d6b', weight: 4, opacity: 0.9 }).addTo(map);
   map.fitBounds(fg.getBounds(), { padding: [40,40] });
 })();
+
 
 </script>
 </html>
