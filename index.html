@@ -337,6 +337,14 @@
       display: block;
       color: var(--accent);
     }
+    /* Karten / iframe previews */
+    .karte iframe {
+      width: 100%;
+      height: 220px;
+      border: 0;
+      display: block;
+      background: #f6f8f9;
+    }
     @media (max-width:480px){
       .contact-float { right: 12px; bottom: 12px; }
       .contact-float .contact-btn { width:40px;height:40px; }
@@ -360,6 +368,7 @@
         <button class="tab" role="tab" aria-selected="true" data-target="tab-about">About</button>
         <button class="tab" role="tab" aria-selected="false" data-target="tab-news">News</button>
         <button class="tab" role="tab" aria-selected="false" data-target="tab-projects">Projects</button>
+        <button class="tab" role="tab" aria-selected="false" data-target="tab-maps">Karten</button>
       </div>
       <button id="themeToggle" class="theme-toggle" aria-pressed="false" title="Light/Night Mode" aria-label="Thema wechseln">🌙</button>
     </div>
@@ -422,6 +431,34 @@
                 </div>
               </div>
             </a>
+          </div>
+        </section>
+      </section>
+
+      <section id="tab-maps" class="tabpanel" role="tabpanel" aria-hidden="true">
+        <section>
+          <h2>Karten</h2>
+          <div class="galerie" style="margin-top:0.8rem;">
+            <a class="karte-link" href="assets/map_1_basiskarte.html" target="_blank" rel="noopener" aria-label="Karte: Basiskarte in neuem Fenster öffnen">
+              <div class="karte" role="article" aria-hidden="false">
+                <iframe src="assets/map_1_basiskarte.html" loading="lazy" title="Vorschau: Basis-Karte" aria-label="Vorschau der Karte" style="border:0;"></iframe>
+                <div class="karte-content">
+                  <div class="karte-title">Basis-Karte 1</div>
+                  <div class="karte-text">Vorschau der aus Colab exportierten Basiskarte. Klicke, um die Karte in voller Größe zu öffnen.</div>
+                </div>
+              </div>
+            </a>
+
+            <a class="karte-link" href="assets/map_2_punkte.html" target="_blank" rel="noopener" aria-label="Karte: Punkte-Karte in neuem Fenster öffnen">
+              <div class="karte" role="article" aria-hidden="false">
+                <iframe src="assets/map_2_punkte.html" loading="lazy" title="Vorschau: Punkte-Karte" aria-label="Vorschau der Punkte-Karte" style="border:0;"></iframe>
+                <div class="karte-content">
+                  <div class="karte-title">Punkte-Karte</div>
+                  <div class="karte-text">Vorschau der Karte mit Punktstandorten. Klicke, um die Karte in voller Größe zu öffnen.</div>
+                </div>
+              </div>
+            </a>
+
           </div>
         </section>
       </section>
@@ -759,6 +796,14 @@
       height: 20px;
       display: block;
       color: var(--accent);
+    }
+    /* Karten / iframe previews */
+    .karte iframe {
+      width: 100%;
+      height: 220px;
+      border: 0;
+      display: block;
+      background: #f6f8f9;
     }
     @media (max-width:480px){
       .contact-float { right: 12px; bottom: 12px; }
