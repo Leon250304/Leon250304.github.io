@@ -350,13 +350,6 @@
       .contact-float .contact-btn { width:40px;height:40px; }
       .contact-icon { width:18px;height:18px; }
     }
-
-    /* 3D overlay (full-screen) */
-    .map3d-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(2,6,23,0.6); z-index: 2200; }
-    .map3d-overlay.active { display: flex; }
-    .map3d-frame { width: 92%; height: 86%; border: 0; border-radius: 10px; box-shadow: 0 20px 60px rgba(2,6,23,0.6); background: #fff; }
-    .map3d-close { position: absolute; top: 18px; right: 18px; z-index: 2300; background: var(--card-bg); border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px; cursor: pointer; }
-    @media (max-width:720px){ .map3d-frame { width: 98%; height: 92%; border-radius:6px; } }
   </style>
 </head>
 <body>
@@ -486,18 +479,16 @@
               </div>
             </a>
 
-            <!-- Replace 3D card: open overlay with iframe (autostart) -->
-            <div class="karte" role="article" aria-hidden="false">
-              <img src="https://picsum.photos/800/450?random=21" alt="Vorschau: 3D LoD2 Gebäude" style="width:100%;height:220px;object-fit:cover;background:#eef2f5;">
-              <div class="karte-content">
-                <div class="karte-title">3D LoD2 Gebäude (Cesium)</div>
-                <div class="karte-text">Interaktive 3D-Ansicht mit Cesium. Klicke auf "3D anzeigen", um die Karte direkt hier zu öffnen.</div>
-                <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
-                  <button id="open3dBtn" class="theme-toggle" style="font-size:0.95rem;cursor:pointer;">3D anzeigen</button>
-                  <a href="assets/map_5_3d.html" target="_blank" rel="noopener" style="color:var(--muted);font-size:0.95rem;">In neuem Tab öffnen</a>
+            <!-- 3D Karte eingebettet wie die anderen Karten -->
+            <a class="karte-link" href="assets/map_5_3d.html" target="_blank" rel="noopener" aria-label="Karte: 3D LoD2 in neuem Fenster öffnen">
+              <div class="karte" role="article" aria-hidden="false">
+                <iframe src="assets/map_5_3d.html" loading="lazy" title="Vorschau: 3D LoD2 Gebäude" aria-label="Vorschau der 3D Karte" style="border:0;"></iframe>
+                <div class="karte-content">
+                  <div class="karte-title">3D LoD2 Gebäude (Cesium)</div>
+                  <div class="karte-text">Interaktive 3D-Ansicht mit Cesium. Klicke, um die Karte in voller Größe zu öffnen.</div>
                 </div>
               </div>
-            </div>
+            </a>
 
           </div>
         </section>
@@ -526,12 +517,6 @@
           <path d="M12 2C7.58 2 4 5.58 4 10c0 3.54 2.29 6.53 5.47 7.58.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.86 2.33.66.07-.52.28-.86.51-1.06-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.5 7.5 0 012 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.19 0 .21.15.46.55.38C17.71 16.53 20 13.54 20 10c0-4.42-3.58-8-8-8z" fill="currentColor"/>
         </svg>
       </a>
-    </div>
-
-    <!-- 3D overlay (full-screen) -->
-    <div id="map3dOverlay" class="map3d-overlay" aria-hidden="true" role="dialog" aria-label="3D Karte">
-      <button id="close3d" class="map3d-close" aria-label="Schließen">✕</button>
-      <iframe id="map3dFrame" class="map3d-frame" src="" allowfullscreen sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
     </div>
 
     <script>
@@ -678,30 +663,6 @@
         }));
 
       })();
-
-      function open3DMap(){
-        const overlay = document.getElementById('map3dOverlay');
-        const frame = document.getElementById('map3dFrame');
-        // set autostart to bypass iframe height restriction in the viewer page
-        frame.src = 'assets/map_5_3d.html?autostart=1';
-        overlay.classList.add('active');
-        overlay.setAttribute('aria-hidden','false');
-        document.body.style.overflow = 'hidden';
-      }
-      function close3DMap(){
-        const overlay = document.getElementById('map3dOverlay');
-        const frame = document.getElementById('map3dFrame');
-        overlay.classList.remove('active');
-        overlay.setAttribute('aria-hidden','true');
-        // unload iframe to free WebGL resources
-        frame.src = '';
-        document.body.style.overflow = '';
-      }
-      document.addEventListener('click', (e)=>{
-        if(e.target && e.target.id === 'open3dBtn') open3DMap();
-        if(e.target && e.target.id === 'close3d') close3DMap();
-      });
-      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') close3DMap(); });
     </script>
 
   </main>
