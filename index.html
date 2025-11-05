@@ -350,6 +350,13 @@
       .contact-float .contact-btn { width:40px;height:40px; }
       .contact-icon { width:18px;height:18px; }
     }
+
+    /* 3D overlay (full-screen) */
+    .map3d-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(2,6,23,0.6); z-index: 2200; }
+    .map3d-overlay.active { display: flex; }
+    .map3d-frame { width: 92%; height: 86%; border: 0; border-radius: 10px; box-shadow: 0 20px 60px rgba(2,6,23,0.6); background: #fff; }
+    .map3d-close { position: absolute; top: 18px; right: 18px; z-index: 2300; background: var(--card-bg); border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+    @media (max-width:720px){ .map3d-frame { width: 98%; height: 92%; border-radius:6px; } }
   </style>
 </head>
 <body>
@@ -479,20 +486,19 @@
               </div>
             </a>
 
-            <!-- Neues: Cesium 3D-Viewer Vorschau (kein iframe: Bild + Link wegen WebGL-Restriktionen in iframes) -->
-            <a class="karte-link" href="assets/map_5_3d.html" target="_blank" rel="noopener" aria-label="Karte: 3D LoD2 Gebäude in neuem Fenster öffnen">
-              <div class="karte" role="article" aria-hidden="false">
-                <img src="https://picsum.photos/800/450?random=21" alt="Vorschau: 3D LoD2 Gebäude" style="width:100%;height:220px;object-fit:cover;background:#eef2f5;">
-                <div class="karte-content">
-                  <div class="karte-title">3D LoD2 Gebäude (Cesium)</div>
-                  <div class="karte-text">Interaktive 3D-Ansicht mit Cesium. WebGL kann in kleinen iframes Probleme machen — öffne die Vollansicht im neuen Tab.</div>
-                  <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
-                    <button class="theme-toggle" style="font-size:0.95rem;cursor:pointer;" onclick="window.open('assets/map_5_3d.html','_blank')">Öffnen (neues Tab)</button>
-                    <a href="assets/map_5_3d.html" target="_blank" rel="noopener" style="color:var(--muted);font-size:0.95rem;">Oder Vollansicht öffnen</a>
-                  </div>
+            <!-- Replace 3D card: open overlay with iframe (autostart) -->
+            <div class="karte" role="article" aria-hidden="false">
+              <img src="https://picsum.photos/800/450?random=21" alt="Vorschau: 3D LoD2 Gebäude" style="width:100%;height:220px;object-fit:cover;background:#eef2f5;">
+              <div class="karte-content">
+                <div class="karte-title">3D LoD2 Gebäude (Cesium)</div>
+                <div class="karte-text">Interaktive 3D-Ansicht mit Cesium. Klicke auf "3D anzeigen", um die Karte direkt hier zu öffnen.</div>
+                <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+                  <button id="open3dBtn" class="theme-toggle" style="font-size:0.95rem;cursor:pointer;">3D anzeigen</button>
+                  <a href="assets/map_5_3d.html" target="_blank" rel="noopener" style="color:var(--muted);font-size:0.95rem;">In neuem Tab öffnen</a>
                 </div>
               </div>
-            </a>
+            </div>
+
           </div>
         </section>
       </section>
@@ -522,329 +528,182 @@
       </a>
     </div>
 
-    <!-- ...existing code... -->
-  </main>
+    <!-- 3D overlay (full-screen) -->
+    <div id="map3dOverlay" class="map3d-overlay" aria-hidden="true" role="dialog" aria-label="3D Karte">
+      <button id="close3d" class="map3d-close" aria-label="Schließen">✕</button>
+      <iframe id="map3dFrame" class="map3d-frame" src="" allowfullscreen sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+    </div>
 
-  <script>
-    (function(){
-      // Theme setup
-      const root = document.documentElement;
-      const toggle = document.getElementById('themeToggle');
-      const storageKey = 'site-theme';
-      const applyTheme = (theme) => {
-        if(theme === 'dark'){
-          root.setAttribute('data-theme','dark');
-          toggle.textContent = '☀️';
-          toggle.setAttribute('aria-pressed','true');
-        } else {
-          root.removeAttribute('data-theme');
-          toggle.textContent = '🌙';
-          toggle.setAttribute('aria-pressed','false');
-        }
-      };
-      // initialize
-      const saved = localStorage.getItem(storageKey);
-      if(saved) applyTheme(saved);
-      else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
-      // toggle on click
-      toggle.addEventListener('click', () => {
-        const isDark = root.getAttribute('data-theme') === 'dark';
-        const next = isDark ? 'light' : 'dark';
-        applyTheme(next === 'dark' ? 'dark' : 'light');
-        localStorage.setItem(storageKey, next === 'dark' ? 'dark' : 'light');
-      });
-
-      // Tabs
-      const tabs = Array.from(document.querySelectorAll('.tab'));
-      const panels = Array.from(document.querySelectorAll('.tabpanel'));
-      function activateTab(targetId){
-        tabs.forEach(t => {
-          const sel = t.dataset.target === targetId;
-          t.setAttribute('aria-selected', sel ? 'true' : 'false');
-          if(sel) t.classList.add('active'); else t.classList.remove('active');
-        });
-        panels.forEach(p => {
-          const isTarget = p.id === targetId;
-          p.setAttribute('aria-hidden', isTarget ? 'false' : 'true');
-          if(isTarget){
-            p.style.display = '';
-            p.animate([{opacity:0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}],{duration:260,easing:'cubic-bezier(.2,.9,.2,1)'});
+    <script>
+      (function(){
+        // Theme setup
+        const root = document.documentElement;
+        const toggle = document.getElementById('themeToggle');
+        const storageKey = 'site-theme';
+        const applyTheme = (theme) => {
+          if(theme === 'dark'){
+            root.setAttribute('data-theme','dark');
+            toggle.textContent = '☀️';
+            toggle.setAttribute('aria-pressed','true');
           } else {
-            p.style.display = 'none';
+            root.removeAttribute('data-theme');
+            toggle.textContent = '🌙';
+            toggle.setAttribute('aria-pressed','false');
           }
+        };
+        // initialize
+        const saved = localStorage.getItem(storageKey);
+        if(saved) applyTheme(saved);
+        else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
+        // toggle on click
+        toggle.addEventListener('click', () => {
+          const isDark = root.getAttribute('data-theme') === 'dark';
+          const next = isDark ? 'light' : 'dark';
+          applyTheme(next === 'dark' ? 'dark' : 'light');
+          localStorage.setItem(storageKey, next === 'dark' ? 'dark' : 'light');
         });
-      }
-      // initial
-      activateTab('tab-about');
-      // listeners
-      tabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.target)));
 
-      // keyboard support
-      document.querySelector('.tabs').addEventListener('keydown', (e) => {
-        const idx = tabs.findIndex(t => t === document.activeElement);
-        if(e.key === 'ArrowRight') tabs[(idx+1)%tabs.length].focus();
-        if(e.key === 'ArrowLeft') tabs[(idx-1+tabs.length)%tabs.length].focus();
-        if(e.key === 'Home') tabs[0].focus();
-        if(e.key === 'End') tabs[tabs.length-1].focus();
+        // Tabs
+        const tabs = Array.from(document.querySelectorAll('.tab'));
+        const panels = Array.from(document.querySelectorAll('.tabpanel'));
+        function activateTab(targetId){
+          tabs.forEach(t => {
+            const sel = t.dataset.target === targetId;
+            t.setAttribute('aria-selected', sel ? 'true' : 'false');
+            if(sel) t.classList.add('active'); else t.classList.remove('active');
+          });
+          panels.forEach(p => {
+            const isTarget = p.id === targetId;
+            p.setAttribute('aria-hidden', isTarget ? 'false' : 'true');
+            if(isTarget){
+              p.style.display = '';
+              p.animate([{opacity:0, transform:'translateY(6px)'},{opacity:1, transform:'translateY(0)'}],{duration:260,easing:'cubic-bezier(.2,.9,.2,1)'});
+            } else {
+              p.style.display = 'none';
+            }
+          });
+        }
+        // initial
+        activateTab('tab-about');
+        // listeners
+        tabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.target)));
+
+        // keyboard support
+        document.querySelector('.tabs').addEventListener('keydown', (e) => {
+          const idx = tabs.findIndex(t => t === document.activeElement);
+          if(e.key === 'ArrowRight') tabs[(idx+1)%tabs.length].focus();
+          if(e.key === 'ArrowLeft') tabs[(idx-1+tabs.length)%tabs.length].focus();
+          if(e.key === 'Home') tabs[0].focus();
+          if(e.key === 'End') tabs[tabs.length-1].focus();
+        });
+
+        // ---- New: load news from JSON ----
+        const newsContainer = document.getElementById('newsContainer');
+        async function loadNews(){
+          try{
+            const res = await fetch('assets/news.json', {cache: 'no-store'});
+            if(!res.ok) throw new Error('Fehler beim Laden der Nachrichten');
+            const data = await res.json();
+            renderNews(data);
+          }catch(err){
+            console.error(err);
+            newsContainer.innerHTML = '<p style="color:var(--muted);">Die News konnten nicht geladen werden.</p>';
+          }
+        }
+        function renderNews(items){
+          if(!items || !items.length){
+            newsContainer.innerHTML = '<p style="color:var(--muted);">Keine aktuellen Nachrichten vorhanden.</p>';
+            return;
+          }
+          newsContainer.innerHTML = '';
+          items.sort((a,b)=> new Date(b.date) - new Date(a.date));
+          items.forEach(item => {
+            const a = document.createElement('a');
+            a.className = 'news-item karte-link';
+            a.href = item.link || '#';
+            a.target = item.link ? '_blank' : '';
+            a.rel = item.link ? 'noopener' : '';
+
+            const card = document.createElement('article');
+            card.className = 'karte';
+            card.style.display = 'flex';
+            card.style.gap = '12px';
+            card.style.alignItems = 'flex-start';
+
+            if(item.image){
+              const img = document.createElement('img');
+              img.src = item.image;
+              img.alt = item.title || 'News Bild';
+              img.style.width = '140px';
+              img.style.height = '100px';
+              img.style.objectFit = 'cover';
+              img.style.flex = '0 0 140px';
+              img.style.borderRadius = '8px';
+              card.appendChild(img);
+            }
+
+            const content = document.createElement('div');
+            content.style.flex = '1';
+
+            const meta = document.createElement('div');
+            meta.style.fontSize = '0.9rem';
+            meta.style.color = 'var(--muted)';
+            meta.style.marginBottom = '0.25rem';
+            meta.textContent = new Date(item.date).toLocaleDateString('de-DE', {year:'numeric',month:'short',day:'numeric'});
+
+            const title = document.createElement('div');
+            title.style.fontWeight = '700';
+            title.style.marginBottom = '0.25rem';
+            title.textContent = item.title || '';
+
+            const excerpt = document.createElement('div');
+            excerpt.style.color = 'var(--muted)';
+            excerpt.textContent = item.excerpt || '';
+
+            content.appendChild(meta);
+            content.appendChild(title);
+            content.appendChild(excerpt);
+
+            card.appendChild(content);
+            a.appendChild(card);
+
+            newsContainer.appendChild(a);
+          });
+        }
+
+        // load immediately when script runs; also reload when News tab is activated to ensure freshness
+        loadNews();
+        document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', (e)=>{
+          if(e.currentTarget.dataset.target === 'tab-news') loadNews();
+        }));
+
+      })();
+
+      function open3DMap(){
+        const overlay = document.getElementById('map3dOverlay');
+        const frame = document.getElementById('map3dFrame');
+        // set autostart to bypass iframe height restriction in the viewer page
+        frame.src = 'assets/map_5_3d.html?autostart=1';
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+      }
+      function close3DMap(){
+        const overlay = document.getElementById('map3dOverlay');
+        const frame = document.getElementById('map3dFrame');
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden','true');
+        // unload iframe to free WebGL resources
+        frame.src = '';
+        document.body.style.overflow = '';
+      }
+      document.addEventListener('click', (e)=>{
+        if(e.target && e.target.id === 'open3dBtn') open3DMap();
+        if(e.target && e.target.id === 'close3d') close3DMap();
       });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') close3DMap(); });
+    </script>
 
-      // ---- New: load news from JSON ----
-      const newsContainer = document.getElementById('newsContainer');
-      async function loadNews(){
-        try{
-          const res = await fetch('assets/news.json', {cache: 'no-store'});
-          if(!res.ok) throw new Error('Fehler beim Laden der Nachrichten');
-          const data = await res.json();
-          renderNews(data);
-        }catch(err){
-          console.error(err);
-          newsContainer.innerHTML = '<p style="color:var(--muted);">Die News konnten nicht geladen werden.</p>';
-        }
-      }
-      function renderNews(items){
-        if(!items || !items.length){
-          newsContainer.innerHTML = '<p style="color:var(--muted);">Keine aktuellen Nachrichten vorhanden.</p>';
-          return;
-        }
-        newsContainer.innerHTML = '';
-        items.sort((a,b)=> new Date(b.date) - new Date(a.date));
-        items.forEach(item => {
-          const a = document.createElement('a');
-          a.className = 'news-item karte-link';
-          a.href = item.link || '#';
-          a.target = item.link ? '_blank' : '';
-          a.rel = item.link ? 'noopener' : '';
-
-          const card = document.createElement('article');
-          card.className = 'karte';
-          card.style.display = 'flex';
-          card.style.gap = '12px';
-          card.style.alignItems = 'flex-start';
-
-          if(item.image){
-            const img = document.createElement('img');
-            img.src = item.image;
-            img.alt = item.title || 'News Bild';
-            img.style.width = '140px';
-            img.style.height = '100px';
-            img.style.objectFit = 'cover';
-            img.style.flex = '0 0 140px';
-            img.style.borderRadius = '8px';
-            card.appendChild(img);
-          }
-
-          const content = document.createElement('div');
-          content.style.flex = '1';
-
-          const meta = document.createElement('div');
-          meta.style.fontSize = '0.9rem';
-          meta.style.color = 'var(--muted)';
-          meta.style.marginBottom = '0.25rem';
-          meta.textContent = new Date(item.date).toLocaleDateString('de-DE', {year:'numeric',month:'short',day:'numeric'});
-
-          const title = document.createElement('div');
-          title.style.fontWeight = '700';
-          title.style.marginBottom = '0.25rem';
-          title.textContent = item.title || '';
-
-          const excerpt = document.createElement('div');
-          excerpt.style.color = 'var(--muted)';
-          excerpt.textContent = item.excerpt || '';
-
-          content.appendChild(meta);
-          content.appendChild(title);
-          content.appendChild(excerpt);
-
-          card.appendChild(content);
-          a.appendChild(card);
-
-          newsContainer.appendChild(a);
-        });
-      }
-
-      // load immediately when script runs; also reload when News tab is activated to ensure freshness
-      loadNews();
-      document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', (e)=>{
-        if(e.currentTarget.dataset.target === 'tab-news') loadNews();
-      }));
-
-    })();
-  </script>
-
-  <style>
-    /* Theme variables and modernized styling */
-    :root {
-      --bg: #f9fafb;
-      --fg: #0f1720;
-      --accent: #20b581ff;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --muted: #6b7280;
-      --glass: rgba(255,255,255,0.6);
-    }
-    :root[data-theme='dark'], [data-theme='dark'] {
-      --bg: #0b1020;
-      --fg: #e6eef2;
-      --accent: #2bd6a1;
-      --card-bg: #071122;
-      --border: rgba(255,255,255,0.06);
-      --muted: #94a3b8;
-      --glass: rgba(255,255,255,0.03);
-    }
-    html { transition: background 220ms ease, color 220ms ease; }
-    body { background: linear-gradient(180deg,var(--bg), rgba(0,0,0,0.02)); transition: background 220ms ease, color 220ms ease; }
-
-    /* Tabs */
-    .tabs-bar { display:flex; align-items:center; gap:0.5rem; }
-    .tab {
-      background: transparent;
-      border: 1px solid transparent;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight:600;
-      color:var(--muted);
-      transition: all 180ms ease;
-      outline: none;
-      box-shadow: none;
-    }
-    .tab:hover { transform: translateY(-2px); color:var(--fg); }
-    .tab[aria-selected='true']{
-      background: linear-gradient(90deg, rgba(32,181,129,0.12), rgba(32,181,129,0.06));
-      color: var(--accent);
-      border-color: rgba(32,181,129,0.18);
-      box-shadow: 0 6px 18px rgba(32,181,129,0.08);
-    }
-    .tab:focus{ box-shadow: 0 0 0 4px rgba(32,181,129,0.08); }
-
-    .theme-toggle{
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 0.45rem 0.6rem;
-      border-radius: 0.55rem;
-      cursor:pointer;
-      font-size:1rem;
-      transition:transform 150ms ease, background 150ms ease;
-    }
-    .theme-toggle:hover{ transform: translateY(-2px); }
-
-    /* Panels */
-    .panels .tabpanel{ display:block; background:var(--card-bg); border-radius:1rem; padding:1.4rem; border:1px solid var(--border); box-shadow:0 8px 30px rgba(2,6,23,0.04); margin-bottom:1rem; }
-    .panels .tabpanel[aria-hidden='true']{ display:none; }
-
-    /* Cards */
-    .karte{ border-radius:0.9rem; overflow:hidden; border:1px solid var(--border); background:var(--card-bg); transition:transform 220ms ease, box-shadow 220ms ease; }
-    .karte img{ height:140px; object-fit:cover; }
-    .karte:hover{ transform: translateY(-6px); box-shadow:0 20px 40px rgba(2,6,23,0.12); }
-
-    /* Table improvements */
-    table tbody tr{ transition:background 180ms ease, transform 180ms ease; }
-    table tbody tr:hover{ transform: translateX(6px); }
-
-    /* Responsive tweaks */
-    @media (max-width:720px){
-      .tabs-bar{ padding:0 0.6rem; }
-      .tab{ padding:0.4rem 0.7rem; font-size:0.95rem; }
-      .karte img{ height:120px; }
-    }
-
-    /* News specific styles */
-    .news-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      margin-top: 0.8rem;
-    }
-    .news-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 0.9rem;
-      background: var(--card-bg);
-      transition: transform 220ms ease, box-shadow 220ms ease;
-    }
-    .news-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(32,181,129,0.18);
-    }
-    .news-item img {
-      width: 140px;
-      height: 100px;
-      object-fit: cover;
-      flex: 0 0 140px;
-      border-radius: 8px;
-    }
-    .news-item div {
-      flex: 1;
-    }
-    .news-item .meta {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
-    }
-    .news-item .title {
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-    .news-item .excerpt {
-      color: var(--muted);
-    }
-
-    /* Floating contact area */
-    .contact-float {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 1200;
-      align-items: center;
-      pointer-events: none; /* allow only links to be interactive */
-    }
-    .contact-float .contact-btn {
-      pointer-events: auto;
-      width: 46px;
-      height: 46px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--fg);
-      border-radius: 10px;
-      text-decoration: none;
-      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
-      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
-    }
-    .contact-float .contact-btn:hover, .contact-float .contact-btn:focus {
-      transform: translateY(-6px);
-      box-shadow: 0 18px 34px rgba(2,6,23,0.12);
-      background: linear-gradient(180deg, rgba(32,181,129,0.06), transparent);
-      outline: none;
-    }
-    .contact-icon {
-      width: 20px;
-      height: 20px;
-      display: block;
-      color: var(--accent);
-    }
-    /* Karten / iframe previews */
-    .karte iframe {
-      width: 100%;
-      height: 220px;
-      border: 0;
-      display: block;
-      background: #f6f8f9;
-    }
-    @media (max-width:480px){
-      .contact-float { right: 12px; bottom: 12px; }
-      .contact-float .contact-btn { width:40px;height:40px; }
-      .contact-icon { width:18px;height:18px; }
-    }
-  </style>
-
+  </main>
 </body>
 </html>
