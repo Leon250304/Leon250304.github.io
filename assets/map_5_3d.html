@@ -3,122 +3,124 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>3D Geländemodell (Cesium)</title>
+  <title>3D LoD2 Gebäude (Cesium)</title>
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.130/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.130/Build/Cesium/Cesium.js"></script>
   <style>
     html, body, #cesiumContainer { width:100%; height:100%; margin:0; padding:0; overflow:hidden; }
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-    #notice { position: absolute; top: 8px; left: 8px; z-index: 1000; background: rgba(255,255,255,0.9); padding:6px 8px; border-radius:6px; font-size:13px; }
+    #notice { position: absolute; top: 8px; left: 8px; z-index: 1000; background: rgba(255,255,255,0.95); padding:8px 10px; border-radius:6px; font-size:13px; }
   </style>
 </head>
 <body>
-  <div id="notice">3D-Ansicht: Geländemodell (Cesium). Klicke, um in voller Größe zu öffnen.</div>
+  <div id="notice">3D‑Viewer: LoD2‑Gebäude. Klicke zum Starten oder öffne die Seite in einem neuen Tab.</div>
   <div id="cesiumContainer"></div>
 
   <script>
-    // Robust initialization: do not auto-init Cesium inside a very small iframe.
-    // Provide a start button and fallback to opening in a new tab if WebGL/context errors occur.
     (function () {
       const NOTICE = document.getElementById('notice');
-      const MIN_HEIGHT = 360; // minimum height in px for safe Cesium init inside iframe
+      const MIN_HEIGHT = 360; // safe min height for iframe init
       let viewer = null;
       let started = false;
 
-      function showNotice(html) {
-        NOTICE.innerHTML = html;
-      }
+      function showNotice(html){ NOTICE.innerHTML = html; }
+      function openInNewTab(){ window.open(window.location.href, '_blank'); }
 
-      function openInNewTab() {
-        window.open(window.location.href, '_blank');
-      }
-
-      async function initCesium() {
-        if (started) return;
+      async function initCesium(){
+        if(started) return;
         started = true;
-        showNotice('Initialisiere 3D-Viewer…');
+        showNotice('Initialisiere 3D‑Viewer…');
 
-        try {
+        try{
           // optional: Cesium.Ion.defaultAccessToken = 'YOUR_TOKEN_HERE';
 
-          viewer = new Cesium.Viewer('cesiumContainer', {
-            shadows: false,
+          viewer = new Cesium.Viewer('cesiumContainer',{
+            timeline: false,
+            animation: false,
             geocoder: false,
-            baseLayerPicker: false
+            baseLayerPicker: false,
+            sceneModePicker: true,
+            navigationHelpButton: false,
+            infoBox: false,
+            selectionIndicator: false,
+            fullscreenButton: true,
+            imageryProvider: false
           });
 
-          // Add OSM basemap
+          // OSM basemap
           const osm = new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' });
           viewer.imageryLayers.addImageryProvider(osm);
 
-          // Optional WMS for Germany (best-effort)
-          try {
-            const provider = new Cesium.WebMapServiceImageryProvider({
+          // WMS basemap (Germany) - best-effort
+          try{
+            const wms = new Cesium.WebMapServiceImageryProvider({
               url: 'https://sgx.geodatenzentrum.de/wms_basemapde?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities',
               layers: 'de_basemapde_web_raster_farbe',
               parameters: { transparent: true, format: 'image/png' }
             });
-            viewer.imageryLayers.addImageryProvider(provider);
-          } catch (err) {
-            console.warn('WMS provider konnte nicht geladen werden:', err);
-          }
+            viewer.imageryLayers.addImageryProvider(wms);
+          }catch(e){ console.warn('WMS konnte nicht geladen werden', e); }
 
-          // Camera
+          // Camera start position (over a region with tiles)
           viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(10.277367, 47.415311, 3500.0),
-            orientation: { heading: Cesium.Math.toRadians(50.0), pitch: Cesium.Math.toRadians(-40.0), roll: 0.0 }
+            destination: Cesium.Cartesian3.fromDegrees(6.958215,50.932767, 1500.0),
+            orientation: { heading: Cesium.Math.toRadians(0.0), pitch: Cesium.Math.toRadians(-50.0), roll: 0.0 }
           });
 
-          // Add terrain
-          window.startup = async function (Cesium) {
-            'use strict';
-            try {
-              const terr = await Cesium.CesiumTerrainProvider.fromUrl('https://sgx.geodatenzentrum.de/gdz_basemapde_3d_gelaende/dgm5_4326_mesh/');
-              viewer.terrainProvider = terr;
-            } catch (error) {
-              console.error(`Error creating terrain: ${error}`);
-            }
-          };
+          // Load LoD2 3D-Tileset
+          try{
+            const tileset = new Cesium.Cesium3DTileset({ url: 'https://sg.geodatenzentrum.de/gdz_basemapde_3d_gebaeude/lod2_4978_null.json' });
+            viewer.scene.primitives.add(tileset);
+            await tileset.readyPromise;
 
-          // Load terrain when Cesium is available
-          if (typeof Cesium !== 'undefined') {
-            window.startupCalled = true;
-            window.startup(Cesium).catch((error) => {
-              'use strict';
-              console.error(error);
+            // Apply simple styling
+            tileset.style = new Cesium.Cesium3DTileStyle({
+              color: { conditions: [
+                ["${surface} === 'wall'", "color('#f2f2f2')"],
+                ["${surface} === 'roof'", "color('#ff5c4d')"],
+                ["${surface} === 'bridge'", "color('#999999')"],
+                ["true", "color('#ffffff')"]
+              ]}
             });
+
+            // Zoom to tileset
+            await viewer.zoomTo(tileset);
+
+          }catch(err){
+            console.error('Fehler beim Laden des 3D‑Tilesets:', err);
+            showNotice('<strong>Fehler beim Laden der 3D‑Gebäude.</strong> <button id="open_tab">In neuem Tab öffnen</button>');
+            document.getElementById('open_tab')?.addEventListener('click', openInNewTab);
+            return;
           }
 
-          // success
-          showNotice('3D-Viewer bereit.');
-          setTimeout(() => { NOTICE.style.display = 'none'; }, 1200);
-        } catch (err) {
+          showNotice('3D‑Viewer bereit.');
+          setTimeout(()=> NOTICE.style.display = 'none', 1200);
+
+        }catch(err){
           console.error('Cesium init error:', err);
-          showNotice('<strong>Fehler beim Starten des 3D-Viewers.</strong> <button id="open_tab">In neuem Tab öffnen</button>');
-          document.getElementById('open_tab').addEventListener('click', openInNewTab);
+          showNotice('<strong>Fehler beim Starten des 3D‑Viewers.</strong> <button id="open_tab">In neuem Tab öffnen</button>');
+          document.getElementById('open_tab')?.addEventListener('click', openInNewTab);
         }
       }
 
-      // If we're inside an iframe and the available height is small, don't init automatically.
+      // iframe safety / autostart handling
       const inIframe = window.self !== window.top;
       const availH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-      // Allow force-start via URL, e.g. ?autostart=1 (used when embedding in an overlay iframe)
       const params = new URLSearchParams(window.location.search);
       const forceStart = params.get('autostart') === '1';
-      if (forceStart) {
-        // try to start Cesium immediately inside the iframe
+
+      if(forceStart){
         initCesium();
-      } else if (!inIframe && availH >= MIN_HEIGHT) {
-        // top-level and enough space: init immediately
+      } else if(!inIframe && availH >= MIN_HEIGHT){
         initCesium();
       } else {
-        // show a start button + open-in-tab fallback
-        showNotice('<strong>3D-Viewer:</strong> Zum Starten klicken oder in neuem Tab öffnen.\n <button id="start3d">3D starten</button> <button id="open_tab">In neuem Tab öffnen</button>');
-        document.getElementById('start3d').addEventListener('click', initCesium);
-        document.getElementById('open_tab').addEventListener('click', openInNewTab);
+        // show start button and fallback
+        showNotice('<strong>3D‑Viewer:</strong> Zum Starten klicken oder in neuem Tab öffnen. <button id="start3d">3D starten</button> <button id="open_tab">In neuem Tab öffnen</button>');
+        document.getElementById('start3d')?.addEventListener('click', initCesium);
+        document.getElementById('open_tab')?.addEventListener('click', openInNewTab);
       }
-    })();
 
+    })();
   </script>
 </body>
 </html>
